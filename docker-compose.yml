@@ -5,6 +5,8 @@ services:
     env_file: .env
     expose:
       - "8000"
+    volumes:
+      - app-data:/app/data/runtime
 
   nginx:
     image: nginx:alpine
@@ -27,5 +29,6 @@ services:
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
 volumes:
+  app-data:
   certbot-webroot:
   certbot-certs:

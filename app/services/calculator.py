@@ -80,12 +80,21 @@ COUNT_DEFAULTS = {
     "slice bread": 30, "bread slice": 30,
     "bay leaf": 0.6, "bay leaves": 0.6,
     "thyme": 1, "sprig thyme": 1,
+    "bell pepper": 150, "bell peppers": 150,
+    "red bell pepper": 150, "green bell pepper": 150, "yellow bell pepper": 150,
+    "jalapeno": 14, "jalapenos": 14, "jalapeño": 14,
+    "green onion": 15, "green onions": 15, "scallion": 15, "scallions": 15,
+    "tomato": 123, "tomatoes": 123,
+    "avocado": 150, "avocados": 150,
+    "cucumber": 201, "cucumbers": 201,
+    "zucchini": 196, "zucchinis": 196,
 }
 
 # Units that are really count-based (not volume/weight)
 UNIT_TO_GRAMS = {
     "stick": 40,        # celery stick
     "stalk": 40,        # celery stalk
+    "stem": 40,         # stem (e.g. choy sum)
     "clove": 3,         # garlic clove
     "sprig": 1,         # herb sprig
     "leaf": 0.6,        # bay leaf etc.
@@ -122,7 +131,7 @@ def _normalize_unit(unit: str | None) -> str | None:
         "ml": "milliliter", "milliliter": "milliliter",
         "fl oz": "fl oz",
         "pinch": "pinch", "dash": "dash", "smidgen": "smidgen",
-        "stick": "stick", "stalk": "stalk", "clove": "clove",
+        "stick": "stick", "stalk": "stalk", "stem": "stem", "clove": "clove",
         "sprig": "sprig", "leaf": "leaf", "slice": "slice",
         "strip": "strip", "link": "link", "can": "can",
         "head": "head", "bunch": "bunch", "bulb": "bulb",

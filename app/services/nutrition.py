@@ -7,62 +7,9 @@ import httpx
 
 from app.config import settings
 from app.models.schemas import MacroSummary, NutritionMatch
+from app.services.overrides import get_override
 
 USDA_API_BASE = "https://api.nal.usda.gov/fdc/v1"
-
-# Common ingredient names mapped to preferred USDA fdc_ids
-# Used when FTS matching consistently picks the wrong entry
-INGREDIENT_OVERRIDES: dict[str, int] = {
-    # Proteins
-    "egg": 171287,          # Egg, whole, raw, fresh
-    "eggs": 171287,
-    # Dairy
-    "butter": 173410,       # Butter, salted
-    "milk": 171265,         # Milk, whole, 3.25% milkfat
-    "cream cheese": 2346385,# Cream cheese, full fat, block
-    "sour cream": 171257,   # Cream, sour, cultured
-    "parmesan cheese": 171247,  # Cheese, parmesan, grated
-    "parmesan": 171247,
-    # Oils
-    "olive oil": 171413,    # Oil, olive, salad or cooking
-    "extra virgin olive oil": 171413,
-    "vegetable oil": 171411,# Oil, soybean, salad or cooking
-    "cooking oil": 171411,
-    # Nuts
-    "walnuts": 170187,      # Nuts, walnuts, english
-    "walnut": 170187,
-    "pecans": 170182,       # Nuts, pecans
-    "almonds": 170567,      # Nuts, almonds
-    # Spices & seasonings
-    "cinnamon": 171320,     # Spices, cinnamon, ground
-    "black pepper": 170931, # Spices, pepper, black
-    "pepper": 170931,
-    "bay leaves": 170917,   # Spices, bay leaf
-    "bay leaf": 170917,
-    "sea salt": 173468,     # Salt, table
-    "sea salt flakes": 173468,
-    "kosher salt": 173468,
-    "salt": 173468,
-    # Vegetables
-    "onion": 170000,        # Onions, raw
-    "onions": 170000,
-    "brown onion": 170000,
-    "yellow onion": 170000,
-    "white onion": 170000,
-    "red onion": 790577,    # Onions, red, raw
-    "garlic": 169230,       # Garlic, raw
-    # Canned goods
-    "canned tomatoes": 333281,      # Tomatoes, canned, red, ripe, diced
-    "canned chopped tomatoes": 333281,
-    "canned diced tomatoes": 333281,
-    "diced tomatoes": 333281,
-    "crushed tomatoes": 170501,     # Tomato products, crushed, canned
-    "tomato paste": 170460,         # Tomato products, canned, puree
-    "beef broth": 171538,           # Soup, beef broth, canned, ready-to-serve
-    "beef stock": 171538,
-    "chicken broth": 172192,        # Soup, chicken broth, ready-to-serve
-    "chicken stock": 172192,
-}
 
 # Words to strip from ingredient names before searching
 PREP_WORDS = {
@@ -301,8 +248,8 @@ def lookup_ingredient(name: str) -> tuple[NutritionMatch | None, MacroSummary | 
     """
     name_lower = name.lower().strip()
 
-    # Check for manual overrides first
-    override_fdc_id = INGREDIENT_OVERRIDES.get(name_lower)
+    # Check for overrides first (SQLite-backed, editable at runtime)
+    override_fdc_id = get_override(name_lower)
     if override_fdc_id:
         conn = _get_db()
         try:

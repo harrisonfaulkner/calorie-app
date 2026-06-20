@@ -4,6 +4,7 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     usda_api_key: str = ""
     database_path: str = "data/nutrition.db"
+    runtime_db_path: str = "data/runtime/runtime.db"
     request_timeout: int = 10
     log_level: str = "INFO"
     allowed_origins: list[str] = ["*"]

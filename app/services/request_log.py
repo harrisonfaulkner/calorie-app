@@ -11,7 +11,7 @@ _LOG_DB = None
 def _get_log_db() -> sqlite3.Connection:
     global _LOG_DB
     if _LOG_DB is None:
-        _LOG_DB = sqlite3.connect(settings.database_path)
+        _LOG_DB = sqlite3.connect(settings.runtime_db_path)
         _LOG_DB.row_factory = sqlite3.Row
         _LOG_DB.execute("""
             CREATE TABLE IF NOT EXISTS request_log (
