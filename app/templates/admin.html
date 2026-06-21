@@ -1,91 +1,225 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Recipe Macros</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
     <style>
-        :root { --pico-font-size: 15px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: "SF Mono", "Menlo", "Consolas", monospace;
+            background: #f4f5f7;
+            color: #1a1a1a;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 1.5rem 1.25rem;
+        }
+
+        header {
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+
+        header h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        header h1 a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        header .tagline {
+            color: #8993a4;
+            font-size: 0.8rem;
+        }
+
+        #loading {
+            color: #8993a4;
+            font-size: 0.85rem;
+        }
+
+        /* Stat cards */
         .stat-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 1rem;
-            margin: 1rem 0;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0;
+            margin-bottom: 1.5rem;
+            border: 1px solid #e2e5ea;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #fff;
         }
+
         .stat-card {
             text-align: center;
-            padding: 1rem;
-            border-radius: var(--pico-border-radius);
-            background: var(--pico-card-background-color);
-            border: 1px solid var(--pico-muted-border-color);
+            padding: 0.85rem 0.5rem;
+            border-right: 1px solid #eef0f3;
+            border-bottom: 1px solid #eef0f3;
         }
+
+        .stat-card:nth-child(3n) { border-right: none; }
+        .stat-card:nth-child(n+4) { border-bottom: none; }
+
         .stat-card .value {
-            font-size: 1.8rem;
+            font-size: 1.4rem;
             font-weight: 700;
             display: block;
+            line-height: 1.2;
+            color: #2563eb;
         }
+
         .stat-card .label {
-            font-size: 0.8rem;
-            color: var(--pico-muted-color);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #8993a4;
+            font-weight: 600;
         }
-        table { font-size: 0.9rem; }
-        .warn { color: var(--pico-del-color); }
-        .ok { color: var(--pico-ins-color); }
-        .section { margin-top: 2rem; }
+
+        /* Card sections */
+        .card {
+            background: #fff;
+            border: 1px solid #e2e5ea;
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .section-head {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #8993a4;
+            margin-bottom: 0.6rem;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        th {
+            text-align: left;
+            font-weight: 500;
+            color: #8993a4;
+            padding: 0.3rem 0.5rem;
+            border-bottom: 2px solid #eef0f3;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        td {
+            padding: 0.4rem 0.5rem;
+            border-bottom: 1px solid #f7f8fa;
+            font-variant-numeric: tabular-nums;
+        }
+
+        tr:last-child td { border-bottom: none; }
+
+        tr:hover { background: #f7f9fc; }
+
+        .ok { color: #16a34a; }
+        .warn { color: #b07020; }
+
+        a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        a:hover { color: #1d4ed8; }
+
+        /* Toggle */
+        details { margin: 0; }
+
+        details summary {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #8993a4;
+            cursor: pointer;
+            list-style: none;
+        }
+
+        details summary:hover { color: #2563eb; }
+
+        details summary::-webkit-details-marker { display: none; }
+
+        details summary::before { content: "[+] "; }
+
+        details[open] summary::before { content: "[-] "; }
     </style>
 </head>
 <body>
-    <main class="container">
-        <h1>Admin Dashboard</h1>
-        <p id="loading">Loading...</p>
+    <div class="container">
+        <header>
+            <h1><a href="/">recipe macros</a></h1>
+            <span class="tagline">admin</span>
+        </header>
+
+        <p id="loading">loading...</p>
         <div id="content" style="display:none;">
 
             <div class="stat-grid" id="overview"></div>
 
-            <div class="section">
-                <h3>Daily Traffic</h3>
+            <div class="card">
+                <div class="section-head">Daily Traffic</div>
                 <table id="daily-table">
-                    <thead><tr><th>Date</th><th>Requests</th><th>Successful</th><th>Failed</th></tr></thead>
+                    <thead><tr><th>date</th><th>requests</th><th>successful</th><th>failed</th></tr></thead>
                     <tbody></tbody>
                 </table>
             </div>
 
-            <div class="section">
-                <h3>Top Recipes</h3>
+            <div class="card">
+                <div class="section-head">Top Recipes</div>
                 <table id="recipes-table">
-                    <thead><tr><th>Recipe</th><th>Hits</th><th>Last Seen</th></tr></thead>
+                    <thead><tr><th>recipe</th><th>hits</th><th>last seen</th></tr></thead>
                     <tbody></tbody>
                 </table>
             </div>
 
-            <div class="section">
-                <h3>Recent Warnings</h3>
+            <div class="card">
+                <div class="section-head">Recent Warnings</div>
                 <table id="warnings-table">
-                    <thead><tr><th>Warning</th><th>Count</th></tr></thead>
+                    <thead><tr><th>warning</th><th>count</th></tr></thead>
                     <tbody></tbody>
                 </table>
             </div>
 
-            <div class="section">
-                <h3>Recent Errors</h3>
+            <div class="card">
+                <div class="section-head">Recent Errors</div>
                 <table id="errors-table">
-                    <thead><tr><th>URL</th><th>Error</th><th>Count</th></tr></thead>
+                    <thead><tr><th>url</th><th>error</th><th>count</th></tr></thead>
                     <tbody></tbody>
                 </table>
             </div>
 
-            <div class="section">
+            <div class="card">
                 <details>
-                    <summary>Ingredient Overrides ({{ overrides_count }})</summary>
-                    <table id="overrides-table">
-                        <thead><tr><th>Ingredient</th><th>FDC ID</th><th>USDA Description</th></tr></thead>
+                    <summary>Ingredient Overrides</summary>
+                    <table id="overrides-table" style="margin-top: 0.75rem;">
+                        <thead><tr><th>ingredient</th><th>fdc id</th><th>usda description</th></tr></thead>
                         <tbody></tbody>
                     </table>
                 </details>
             </div>
         </div>
-    </main>
+    </div>
 
     <script>
         const API_KEY = {{ api_key|tojson }};
@@ -124,7 +258,6 @@
             const overrides = await overridesResp.json();
             const o = stats.overview;
 
-            // Overview cards
             const successRate = o.total_requests > 0
                 ? Math.round((o.successful / o.total_requests) * 100) : 0;
             const cards = [
@@ -142,7 +275,6 @@
                 </div>
             `).join('');
 
-            // Daily
             const dailyBody = document.querySelector('#daily-table tbody');
             dailyBody.innerHTML = stats.daily.map(d => `
                 <tr>
@@ -153,7 +285,6 @@
                 </tr>
             `).join('');
 
-            // Top recipes
             const recipesBody = document.querySelector('#recipes-table tbody');
             recipesBody.innerHTML = stats.top_recipes.map(r => `
                 <tr>
@@ -163,10 +294,9 @@
                 </tr>
             `).join('');
 
-            // Warnings
             const warningsBody = document.querySelector('#warnings-table tbody');
             if (warnings.length === 0) {
-                warningsBody.innerHTML = '<tr><td colspan="2">No warnings</td></tr>';
+                warningsBody.innerHTML = '<tr><td colspan="2" style="color:#8993a4;">No warnings</td></tr>';
             } else {
                 warningsBody.innerHTML = warnings.map(w => `
                     <tr>
@@ -176,10 +306,9 @@
                 `).join('');
             }
 
-            // Errors
             const errorsBody = document.querySelector('#errors-table tbody');
             if (errors.length === 0) {
-                errorsBody.innerHTML = '<tr><td colspan="3">No errors</td></tr>';
+                errorsBody.innerHTML = '<tr><td colspan="3" style="color:#8993a4;">No errors</td></tr>';
             } else {
                 errorsBody.innerHTML = errors.map(e => {
                     const errMsg = e.error.split('\n')[0].replace(/^Client error '/, '').replace(/' for url.*/, '');
@@ -193,7 +322,6 @@
                 }).join('');
             }
 
-            // Overrides
             const overridesBody = document.querySelector('#overrides-table tbody');
             document.querySelector('details summary').textContent =
                 'Ingredient Overrides (' + overrides.length + ')';
