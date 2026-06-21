@@ -96,7 +96,25 @@ Search the USDA database directly.
 
 ### `GET /api/v1/logs/recent`
 
-Recent request logs for debugging and monitoring accuracy.
+Recent request logs for debugging and monitoring accuracy. Requires `X-Api-Key` header.
+
+### `GET /api/v1/logs/stats`
+
+Traffic stats: total/successful/failed requests, daily breakdown, top recipes. Requires `X-Api-Key` header.
+
+### `GET/POST /api/v1/overrides`, `DELETE /api/v1/overrides/{name}`
+
+Manage ingredient-to-USDA-food overrides. Use these to fix bad matches (e.g., map "butter" to a specific FDC ID). Requires `X-Api-Key` header.
+
+## Admin Dashboard
+
+An admin dashboard is available at `/admin?key=YOUR_ADMIN_KEY`. It shows traffic stats, daily request volume, top recipes, recent warnings/errors, and lets you manage ingredient overrides.
+
+Set the `ADMIN_API_KEY` environment variable to enable it:
+
+```bash
+ADMIN_API_KEY=some-secret-key
+```
 
 ## Deployment with SSL
 
